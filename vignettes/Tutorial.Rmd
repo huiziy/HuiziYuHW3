@@ -50,7 +50,6 @@ The function `lm_func` will produce a list containing the following objects
    + `hat_mat`: the hat matrix (used for extracting leverage)
 
 ```{r fit}
-require(survival)
 ## Testing the package on Simulated Data
 n = 10000
 ## Generate continuous and categorical variables
