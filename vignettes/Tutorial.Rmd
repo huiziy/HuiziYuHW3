@@ -50,6 +50,10 @@ The function `lm_func` will produce a list containing the following objects
    + `hat_mat`: the hat matrix (used for extracting leverage)
 
 ```{r fit}
+if(!require(Hmisc)) install.packages("Hmisc",repos = "http://cran.us.r-project.org")
+if(!require(lattice)) install.packages("lattice",repos = "http://cran.us.r-project.org")
+if(!require(Matrix)) install.packages("Matrix",repos = "http://cran.us.r-project.org")
+if(!require(survival)) install.packages("survival",repos = "http://cran.us.r-project.org",type = "binary")
 ## Testing the package on Simulated Data
 n = 10000
 ## Generate continuous and categorical variables
@@ -116,7 +120,7 @@ res <- bench::mark(
 print(t(res))
 
 ### All numeric variable with no missingness
-require("MASS")
+library("MASS")
 data(Boston)
 X = Boston[-ncol(Boston)]
 y = Boston$medv

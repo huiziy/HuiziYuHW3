@@ -1,6 +1,10 @@
-require("Hmisc")
-require("mltools")
-require("data.table")
+if(!require(Hmisc)) install.packages("Hmisc",repos = "http://cran.us.r-project.org")
+if(!require(lattice)) install.packages("lattice",repos = "http://cran.us.r-project.org")
+if(!require(Matrix)) install.packages("Matrix",repos = "http://cran.us.r-project.org")
+if(!require(survival)) install.packages("survival",repos = "http://cran.us.r-project.org",type = "binary")
+library("Hmisc")
+library("mltools")
+library("data.table")
 #'linear regression function
 #'
 #'Calculate linear model results including coefficient, standard errors, t and p values, MSE, Rsquared and Adusted Rsquared
