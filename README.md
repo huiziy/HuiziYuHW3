@@ -3,6 +3,13 @@
 
 # HuiziYuHW3
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/huiziy/HuiziYuHW3/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/huiziy/HuiziYuHW3/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/huiziy/HuiziYuHW3/branch/main/graph/badge.svg)](https://app.codecov.io/gh/huiziy/HuiziYuHW3?branch=main)
+<!-- badges: end -->
+
 The goal of HuiziYuHW3 is to …
 
 ## Installation
