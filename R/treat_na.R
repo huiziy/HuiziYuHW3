@@ -1,5 +1,30 @@
 require("mice")
+#'Missing value imputation
+#'
+#'Function to treat missing values; also embedded in the lm_func
+#'@param na.action Possible treatment for NA values, including "ignore", "mean_impute", "mice_impute". Default to "ignore"
+#'
+#'@param data A data frame (one or multiple columns) of predictors (continous or categorical) with or without missing values
+#'
+#'@param y A vector of outcome values (continuous) with or without missing values
+#'
 
+#'@return A list of data without missing values that can be used in the linear model; objects include complete predictor matrix and complete outcome variable
+#'
+#'@examples
+#'n = 10000
+#'x1 = rnorm(n, mean = 100, sd = 2)
+#'e = rnorm(n, mean = 0, sd = 1)
+#'y = 5 + 3 * x1 + e
+#'## Randomly generate some missing values
+#'set.seed(123)
+#'ind = sample(x = n , size = 0.1 * n)
+#'x1[ind] = NA
+#'## Creating a data frame for storing testing data
+#'X = data.frame(x1)
+#'treat_na(na.action = "mice_impute",X,y)
+#'@export
+#'
 treat_na <- function(na.action, data, y) {
   if (na.action == "ignore") {
     full_data = na.omit(cbind(data,y))

@@ -1,7 +1,25 @@
 require("Hmisc")
 require("mltools")
 require("data.table")
-
+#'linear regression function
+#'
+#'Calculate linear model results including coefficient, standard errors, t and p values, MSE, Rsquared and Adusted Rsquared
+#'@param X A data frame (one or multiple columns) of predictors (both continuous and categorical)
+#'
+#'@param y A vector of outcome values (continuous)
+#'
+#'@param na.action Possible treatment for NA values, including "ignore", "mean_impute", "mice_impute". Default to "ignore"
+#'
+#'@return A list of useful attributes calculated from the linear model
+#'
+#'@examples
+#'require("MASS")
+#'data(Boston)
+#'X = Boston[-ncol(Boston)]
+#'y = Boston$medv
+#'lm_func(X,y, na.action = "ignore")
+#'@export
+#'
 lm_func <- function(X,y,weights, na.action = "ignore") {
   ## We require the input X to be a data frame
   stopifnot("Input predictors are not a data frame." = is.data.frame(X))
@@ -73,13 +91,9 @@ lm_func <- function(X,y,weights, na.action = "ignore") {
   return(list(fitted_values =y_fitted,
               residuals = residuals,
               betas = betas,
-              beta_se = se_beta,
-              t_stat = t_stat,
-              p_stat = pt_value,
-              hat_mat = hat_mat,
+              details = list(beta_se = se_beta,t_stat = t_stat,p_stat = pt_value,hat_mat = hat_mat,SSE = SSE),
               beta_summary = summary_result,
               MSE = MSE,
-              SSE = SSE,
               R_squared = R_square,
               R_squared_adjusted = R_square_adjusted))
 }

@@ -1,0 +1,152 @@
+---
+title: "Tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(HuiziYuHW3)
+```
+
+## PART ONE: Description of the `lm_func` 
+
+To fit the linear models, users can use the `lm_func` function in the package. The input include a data frame containing the predictors (can have missing values, can be both numeric or categorical), a vector containing the outcome (can have missing values, can only be numeric), an a string of desired missing value treatment (choose from "ignore", "mean_impute" and "mice_impute"). Details can be found below. 
+
+### Missing value treatment:
+
+* `ignore`: same as the default `lm` function and `na.omit`: any rows containing missing values are dropped. The linear regression coefficient estimates are calculated using only rows with all complete observations. 
+* `mean_impute`: performs mean imputation on the numeric variables, and mode imputation on categorical variables. If multiple modes are found for the categorical variable, the algorithm will randomly choose one. 
+* `mice_impute`: performs Multiple Imputation by Chained Equation. The assumption for the missingness missingness mechanism are the data are missing at random, or the data are missing completely at random. Only one set of complete observations are generated and used for linear model building. 
+
+### One-hot encoding for categorical variables: 
+
+After obtaining the complete data that can be used in the model, if the data contains categorical variables, we perform one-hot encoding, and drop the base level. 
+
+
+### Results:
+
+The function `lm_func` will produce a list containing the following objects
+
+* `fitted_values`: the fitted values obtain after coefficient estimation
+* `residuals`: the residuals, which is calculated by taking the difference between observed outcome and fitted values
+* `betas`: the coefficient estimates obtained from the linear model
+* `beta_summary`: contains the coefficient estimate, standard errors of the coefficients, t_value and p_value
+* `MSE`: Mean Squared Error
+* `R_squared`: R squared
+* `R_squared_adjusted`: R squared Adjusted
+* `details`: additional information about the model that will be used in plotting. Including      + `beta_se`: the standard errors of the coefficient
+   + `t_stat`: the t statistics of the betas
+   + `p_stat`: the p stat of the coefficients (used for evaluating the significance of the coefficient)
+   + `hat_mat`: the hat matrix (used for extracting leverage)
+
+```{r fit}
+require(survival)
+## Testing the package on Simulated Data
+n = 10000
+## Generate continuous and categorical variables
+x1 = rnorm(n, mean = 100, sd = 2)
+x2 = rnorm(n, mean = 40, sd = 4)
+x3 = factor(sample(c("female","male","non-binary","refused to answer"), size = n, replace = TRUE))
+e = rnorm(n, mean = 0, sd = 1)
+## Generate outcome variable
+y = 5 + 3 * x1 + 7 * x2 + 8 * ifelse(x3 == "male",1,0) + 0.5 * ifelse(x3 == "refused to answer",1,0) + 10 * ifelse(x3 == "non-binary",1,0) + e
+## Randomly generate some missing values in the predictors
+set.seed(123)
+ind = sample(x = n , size = 0.1 * n)
+x1[ind] = NA
+set.seed(1234)
+ind = sample(x = n , size = 0.1 * n)
+x2[ind] = NA
+set.seed(12345)
+ind = sample(x = n , size = 0.1 * n)
+x3[ind] = NA
+## Creating a data frame for storing testing data
+X = data.frame(x1,x2,x3)
+lm_1 = lm_func(X,y, na.action = "ignore")
+print(lm_1$beta_summary)
+```
+
+## Compare results to base functions
+
+Below, we test to ensure that our results align with the standard output from base R alternatives. One advantage of `lm_func()`, you might observe, is that we can access important model components without needing to use additional functions like `summary()`.
+
+```{r test}
+full_data = data.frame(X,y)
+## Official version
+lm_2 = lm(y~., data = full_data)
+lm2_sum <- summary(lm_2)
+#Check coefficients
+all.equal(as.vector(lm_1$betas), as.vector(lm2_sum$coefficients[,1]))
+#Check coefficient standard error
+all.equal(as.vector(lm_1$details$beta_se), as.vector(lm2_sum$coefficients[,2]))
+#Check coefficient standard error
+all.equal(as.vector(lm_1$details$beta_se), as.vector(lm2_sum$coefficients[,2]))
+#Check residuals
+all.equal(as.vector(lm_1$residuals), as.vector(lm2_sum$residuals), check.attributes = F)
+#Check fitted values
+all.equal(as.vector(lm_1$fitted_values), as.vector(lm_2$fitted.values), check.attributes = F)
+#Check R-squared
+all.equal(lm_1$R_squared, lm2_sum$r.squared, check.attributes = F)
+```
+
+## Compare speed to base functions
+Next, we compare the efficiency of `lm_func()` to `lm()` using the **bench** package. We can see in the output table below that the `lm()` function is faster on average. We believe this is because our user defined function also attempted to check for missing value and conduct missing value treatment under the hood. Additionally, the user written function of `one_hot` encoding might be slower than the default version. 
+
+We also use a complete data set with all numeric variables to test the performance. Without the need to impute data or one hot encode categorical variables, the user written version and the default version show relatively similar performance. The user written version is still slightly slower, possibly due to time needed to check for variable type. 
+
+```{r compare, message=FALSE}
+library(bench)
+library(kableExtra)
+library(knitr)
+### Numeric and categorical variable with missingness
+res <- bench::mark(
+  as.vector(lm_func(X,y, na.action = "ignore")$betas),
+  as.vector(summary(lm(y~., data = full_data))$coefficients[,1]),
+)
+## Renaming expression name for clarity
+print(t(res))
+
+### All numeric variable with no missingness
+require("MASS")
+data(Boston)
+X = Boston[-ncol(Boston)]
+y = Boston$medv
+res2 = bench::mark(
+  user_define =as.vector(lm_func(X,y)$betas),
+  as.vector(summary(lm(medv~., data = Boston))$coefficients[,1]),
+)
+## Renaming expression name for clarity
+print(t(res2))
+```
+
+## PART TWO: Description of the plot functions
+
+After using the `lm_func`, we would like to use diagnostic plots to check the linear regression assumptions. The assumptions include: 
+
+* Linear relationship: There exists a linear relationship between the independent variable, x, and the dependent variable, y.
+* Independence: The residuals are independent. In particular, there is no correlation between consecutive residuals in time series data.
+* Homoscedasticity (constant variance): The residuals have constant variance at every level of x.
+* Normality: The residuals of the model are normally distributed.
+
+We will check these assumptions using the same four plots from the default `lm` function
+
+```{r fit2}
+## Residual VS Fitted Graph
+res_fitted(lm_1)
+## Scale VS location Graph
+scale_location(lm_1)
+## QQ plot
+qq_plot(lm_1)
+## Residual VS leverage Graph
+res_lev(lm_1)
+```

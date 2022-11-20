@@ -4,10 +4,14 @@ Title: Linear Models
 Version: 0.1.0
 Author: Huizi Yu
 Maintainer: Huizi Yu <huiziy@umich.edu>
-Description: BIOSTATS625 HW3 Linear Models Package
-License: use_mit_license()
+Description: BIOSTATS625 HW3 Linear Models Package, contains the standard linear models function, embedded missing variable treatment function, and diagnostic graph functions. 
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+RoxygenNote: 7.2.1
+VignetteBuilder: knitr
