@@ -1,20 +1,15 @@
-all.is.numeric = function (x, what = c("test", "vector"), extras = c(".", "NA"))
-{
-  what <- match.arg(what)
-  x <- sub("[[:space:]]+$", "", x)
-  x <- sub("^[[:space:]]+", "", x)
-  xs <- x[x %nin% c("", extras)]
-  if (!length(xs))
-    return(if (what == "test") FALSE else x)
-  isnum <- suppressWarnings(!any(is.na(as.numeric(xs))))
-  if (what == "test")
-    isnum
-  else if (isnum)
-    as.numeric(x)
-  else x
+if (!require("mltools",character.only = T)) {
+  install.packages("mltools",quiet=TRUE,repos = "https://cloud.r-project.org")
 }
-require("mltools")
-require("data.table")
+if (!require("data.table",character.only = T)) {
+  install.packages("data.table",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+if (!require("Hmsic",character.only = T)) {
+  install.packages("Hmsic",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+library(Hmisc,quietly = TRUE)
+library(mltools, quietly = TRUE) ## help with discretization
+library(data.table, quietly = TRUE)
 #'linear regression function
 #'
 #'Calculate linear model results including coefficient, standard errors, t and p values, MSE, Rsquared and Adusted Rsquared

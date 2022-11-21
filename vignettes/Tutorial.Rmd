@@ -50,10 +50,18 @@ The function `lm_func` will produce a list containing the following objects
    + `hat_mat`: the hat matrix (used for extracting leverage)
 
 ```{r fit}
-if(!require(Hmisc)) install.packages("Hmisc",repos = "http://cran.us.r-project.org")
-if(!require(lattice)) install.packages("lattice",repos = "http://cran.us.r-project.org")
-if(!require(Matrix)) install.packages("Matrix",repos = "http://cran.us.r-project.org")
-if(!require(survival)) install.packages("survival",repos = "http://cran.us.r-project.org",type = "binary")
+if (!require("mltools",character.only = T)) {
+  install.packages("mltools",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+if (!require("data.table",character.only = T)) {
+  install.packages("data.table",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+if (!require("Hmsic",character.only = T)) {
+  install.packages("Hmsic",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+library(Hmisc,quietly = TRUE)
+library(mltools, quietly = TRUE) ## help with discretization
+library(data.table, quietly = TRUE)
 ## Testing the package on Simulated Data
 n = 10000
 ## Generate continuous and categorical variables
@@ -109,8 +117,6 @@ We also use a complete data set with all numeric variables to test the performan
 
 ```{r compare, message=FALSE}
 library(bench)
-library(kableExtra)
-library(knitr)
 ### Numeric and categorical variable with missingness
 res <- bench::mark(
   as.vector(lm_func(X,y, na.action = "ignore")$betas),
@@ -120,7 +126,10 @@ res <- bench::mark(
 print(t(res))
 
 ### All numeric variable with no missingness
-library("MASS")
+if (!require("MASS",character.only = T)) {
+  install.packages("MASS",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
+library(MASS, quietly = TRUE)
 data(Boston)
 X = Boston[-ncol(Boston)]
 y = Boston$medv
