@@ -30,26 +30,43 @@ You can install the development version of HuiziYuHW3 from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("huiziy/HuiziYuHW3")
+devtools::install_github("huiziy/HuiziYuHW3",dependencies = TRUE, build_vignettes = TRUE)
 ```
 
 ## Structure
 
-- `lm_func`: main function used to produce linear regression model
+- `README.Rmd`
+
+- `lm_func.R`: main function used to produce linear regression model
   prediction
+
   - input:
     1.  X - data frame of predictors (continuous and categorical;
         missing values allowed)
     2.  y - vector of outcome
     3.  na.action - “ignore” or “mean_impute”
   - output: a list object containing relevant model information
-- `treat_na`: missing data treatment function. Embedded in the `lm_func`
+
+- `treat_na.R`: missing data treatment function. Embedded in the
+  `lm_func`
+
   - input:
     1.  na.action - “ignore” or “mean_impute”
     2.  data - data frame of predictors (continuous and categorical
     3.  contains missing values); y - vector of outcome
   - output: completed data that can be used in linear model estimation
-    \## Details of the Function
+
+- `tests/testthat/test-lm_func.R`: Unit testing function. Including
+  testing for `lm_func` and `treat_na`. The test coverage is 100%
+
+- `vignettes/Tutorials.Rmd`: tutorial on how to use the function and
+  additional details. The vignette also included:
+
+  - comparisons against original `lm` function on both simulated data
+    and real data (Boston Housing data) with correctness test using
+    `all.equal()` and efficiency test using `bench::mark()`
+  - to access the vignette, type `browseVignettes("HuiziYuHW3)` in the R
+    Console
 
 ## Function Specifications
 

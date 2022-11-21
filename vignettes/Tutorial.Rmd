@@ -6,16 +6,16 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+```{r setup, include=FALSE} 
+library(HuiziYuHW3)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
-
-```{r setup}
-library(HuiziYuHW3)
 ```
 
 ## PART ONE: Description of the `lm_func` 
@@ -113,7 +113,7 @@ res <- bench::mark(
   as.vector(lm_func(X,y, na.action = "ignore")$betas),
   as.vector(summary(lm(y~., data = full_data))$coefficients[,1]),
 )
-## Renaming expression name for clarity
+## Printing the results
 print(t(res))
 
 ### All numeric variable with no missingness
@@ -125,7 +125,7 @@ data(Boston)
 X = Boston[-ncol(Boston)]
 y = Boston$medv
 res2 = bench::mark(
-  user_define =as.vector(lm_func(X,y)$betas),
+  as.vector(lm_func(X,y)$betas),
   as.vector(summary(lm(medv~., data = Boston))$coefficients[,1]),
 )
 ## Renaming expression name for clarity

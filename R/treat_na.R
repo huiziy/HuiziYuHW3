@@ -33,7 +33,7 @@ treat_na <- function(na.action, data, y) {
   } else if (na.action == "mean_impute") {
     ## Note that data should be a data frame instead of a matrix for this to work
     ## Create a custom function for imputing the categorical data with mode.
-    my_mode <- function(x) {                                     # Create mode function
+    my_mode <- function(x) { # Create mode function
       unique_x <- unique(x)
       mode <- unique_x[which.max(tabulate(match(x, unique_x)))]
       mode

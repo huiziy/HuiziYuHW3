@@ -22,18 +22,18 @@ lm_func <- function(X,y,weights, na.action = c("ignore","mean_impute","mice_impu
   ## We require the input X to be a data frame
   stopifnot("Input predictors are not a data frame." = is.data.frame(X))
   # Missing Data Manipulation
-  # There are three missing data treatment:
+  # There are two missing data treatment:
   # "ignore": any row with missing variables will be removed
   # "mean_impute": impute with the mean of each row; or if categorical data, impute with mode
-  # "mice_impute": impute the entire data with the MICE package: which is the Multiple Imputation with Chained Equation
   # We write the missing data treatment function in a separate R function
   filled_object = treat_na(na.action,X,y)
+  ## Extract the complete predictor matrix and the outcome
   predictors = filled_object[[1]]
   y = filled_object[[2]]
-
-  # Preparing the dataframe for linear models
+  # Preparing the data frame for linear models
   full_data = data.frame(predictors,y)
   X = model.matrix(y~., data = full_data)
+  # Error message
   if (nrow(X) <= ncol(X)){
     stop("There are too many parameters in the data frame")
   }
@@ -64,6 +64,7 @@ lm_func <- function(X,y,weights, na.action = c("ignore","mean_impute","mice_impu
   ## Summary Statistics
   summary_result = cbind(betas, se_beta, t_stat, pt_value)
   colnames(summary_result) = c("coefficients","se","t_value", "p_value")
+  ## Output to list of objects
   return(list(fitted_values =y_fitted,
               residuals = residuals,
               betas = betas,
