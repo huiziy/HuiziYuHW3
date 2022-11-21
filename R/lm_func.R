@@ -1,14 +1,3 @@
-if (!require("mltools",character.only = T)) {
-  install.packages("mltools",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-if (!require("data.table",character.only = T)) {
-  install.packages("data.table",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-if (!require("Hmsic",character.only = T)) {
-  install.packages("Hmsic",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-library(Hmisc,quietly = TRUE)
-library(mltools, quietly = TRUE) ## help with discretization
 library(data.table, quietly = TRUE)
 #'linear regression function
 #'

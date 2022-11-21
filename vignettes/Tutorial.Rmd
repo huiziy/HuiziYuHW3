@@ -49,17 +49,6 @@ The function `lm_func` will produce a list containing the following objects
    + `hat_mat`: the hat matrix (used for extracting leverage)
 
 ```{r fit}
-if (!require("mltools",character.only = T)) {
-  install.packages("mltools",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-if (!require("data.table",character.only = T)) {
-  install.packages("data.table",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-if (!require("Hmsic",character.only = T)) {
-  install.packages("Hmsic",quiet=TRUE,repos = "https://cloud.r-project.org")
-}
-library(Hmisc,quietly = TRUE)
-library(mltools, quietly = TRUE) ## help with discretization
 library(data.table, quietly = TRUE)
 ## Testing the package on Simulated Data
 n = 10000
@@ -115,6 +104,9 @@ Next, we compare the efficiency of `lm_func()` to `lm()` using the **bench** pac
 We also use a complete data set with all numeric variables to test the performance. Without the need to impute data or one hot encode categorical variables, the user written version and the default version show relatively similar performance. The user written version is still slightly slower, possibly due to time needed to check for variable type. 
 
 ```{r compare, message=FALSE}
+if (!require("bench",character.only = T)) {
+  install.packages("bench",quiet=TRUE,repos = "https://cloud.r-project.org")
+}
 library(bench)
 ### Numeric and categorical variable with missingness
 res <- bench::mark(
