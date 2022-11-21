@@ -51,6 +51,8 @@ devtools::install_github("huiziy/HuiziYuHW3")
   - output: completed data that can be used in linear model estimation
     \## Details of the Function
 
+## Function Specifications
+
 ### Missing value treatment:
 
 - `ignore`: same as the default `lm` function and `na.omit`: any rows
