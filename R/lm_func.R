@@ -1,10 +1,20 @@
-if(!require(Hmisc)) install.packages("Hmisc",repos = "http://cran.us.r-project.org")
-if(!require(lattice)) install.packages("lattice",repos = "http://cran.us.r-project.org")
-if(!require(Matrix)) install.packages("Matrix",repos = "http://cran.us.r-project.org")
-if(!require(survival)) install.packages("survival",repos = "http://cran.us.r-project.org",type = "binary")
-library("Hmisc")
-library("mltools")
-library("data.table")
+all.is.numeric = function (x, what = c("test", "vector"), extras = c(".", "NA"))
+{
+  what <- match.arg(what)
+  x <- sub("[[:space:]]+$", "", x)
+  x <- sub("^[[:space:]]+", "", x)
+  xs <- x[x %nin% c("", extras)]
+  if (!length(xs))
+    return(if (what == "test") FALSE else x)
+  isnum <- suppressWarnings(!any(is.na(as.numeric(xs))))
+  if (what == "test")
+    isnum
+  else if (isnum)
+    as.numeric(x)
+  else x
+}
+require("mltools")
+require("data.table")
 #'linear regression function
 #'
 #'Calculate linear model results including coefficient, standard errors, t and p values, MSE, Rsquared and Adusted Rsquared
@@ -37,7 +47,7 @@ lm_func <- function(X,y,weights, na.action = "ignore") {
   predictors = filled_object[[1]]
   y = filled_object[[2]]
   ## If all the variables are numeric, we calculate matrix algebra to find the closed form solution
-  if (Hmisc::all.is.numeric(predictors)) {
+  if (all.is.numeric(predictors)) {
     # matrix of the predictors
     predictors <- as.matrix(predictors)
     # Add intercept column to X
