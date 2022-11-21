@@ -29,7 +29,7 @@ library(data.table, quietly = TRUE)
 #'lm_func(X,y, na.action = "ignore")
 #'@export
 #'
-lm_func <- function(X,y,weights, na.action = "ignore") {
+lm_func <- function(X,y,weights, na.action = c("ignore","mean_impute","mice_impute")) {
   ## We require the input X to be a data frame
   stopifnot("Input predictors are not a data frame." = is.data.frame(X))
   # Missing Data Manipulation
@@ -41,41 +41,19 @@ lm_func <- function(X,y,weights, na.action = "ignore") {
   filled_object = treat_na(na.action,X,y)
   predictors = filled_object[[1]]
   y = filled_object[[2]]
-  ## If all the variables are numeric, we calculate matrix algebra to find the closed form solution
-  if (all.is.numeric(predictors)) {
-    # matrix of the predictors
-    predictors <- as.matrix(predictors)
-    # Add intercept column to X
-    X <- cbind(1, predictors)
-    if (nrow(X) != length(y)){
-      stop("The dimensions of predictors and outcome are different.")
 
-    }
-    if (nrow(X) <= ncol(X)){
-      stop("There are too many parameters in the data frame")
-    }
-    if (det(t(X) %*% X) == 0){
-      stop("The predictor matrix must be a full rank")
-    }
-    # Implement closed-form solution
-    betas <- solve(t(X) %*% X) %*% t(X) %*% y
-    # Printing the coefficients
-  } else {
-    full_data = data.frame(predictors,y)
-    X = model.matrix(y~., data = full_data)
-    if (nrow(X) != length(y)){
-      stop("The dimensions of predictors and outcome are different.")
-
-    }
-    if (nrow(X) <= ncol(X)){
-      stop("There are too many parameters in the data frame")
-    }
-    if (det(t(X) %*% X) == 0){
-      stop("The predictor matrix must be a full rank")
-    }
-    # Implement closed-form solution
-    betas <- solve(t(X) %*% X) %*% t(X) %*% y
+  # Preparing the dataframe for linear models
+  full_data = data.frame(predictors,y)
+  X = model.matrix(y~., data = full_data)
+  if (nrow(X) <= ncol(X)){
+    stop("There are too many parameters in the data frame")
   }
+  if (det(t(X) %*% X) == 0){
+    stop("The predictor matrix must be a full rank")
+  }
+  # Implement closed-form solution
+  betas <- solve(t(X) %*% X) %*% t(X) %*% y
+
   ## Calculated related measures
   y_fitted = X %*% betas
   residuals = y - y_fitted

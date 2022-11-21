@@ -1,4 +1,3 @@
-require("mice")
 #'Missing value imputation
 #'
 #'Function to treat missing values; also embedded in the lm_func
@@ -34,11 +33,10 @@ treat_na <- function(na.action, data, y) {
   } else if (na.action == "mean_impute") {
     ## Note that data should be a data frame instead of a matrix for this to work
     ## Create a custom function for imputing the categorical data with mode.
-    my_mode <- function(x) {
-      ux <- unique(x)
-      tab <- tabulate(match(x, ux))
-      mode <- ux[tab == max(tab)]
-      ifelse(length(mode) > 1, sample(mode, 1), mode)
+    my_mode <- function(x) {                                     # Create mode function
+      unique_x <- unique(x)
+      mode <- unique_x[which.max(tabulate(match(x, unique_x)))]
+      mode
     }
     ## Loop through each column and for
     ## (1) numeric data: impute with mean
@@ -47,10 +45,8 @@ treat_na <- function(na.action, data, y) {
     imputed_y = y
     for (var in 1:ncol(imputed_data)) {
       if (class(imputed_data[,var])=="numeric") {
-        print("numeric")
         imputed_data[is.na(imputed_data[,var]),var] <- mean(imputed_data[,var], na.rm = TRUE)
       } else if (class(imputed_data[,var]) %in% c("character", "factor")) {
-        print("categorical")
         imputed_data[,var] = as.character(imputed_data[,var])
         imputed_data[is.na(imputed_data[,var]),var] <- my_mode(imputed_data[,var])
         imputed_data[,var] = as.factor(imputed_data[,var])
@@ -58,11 +54,6 @@ treat_na <- function(na.action, data, y) {
     }
     ## all numeric response, so we simply impute with the mean
     imputed_y[is.na(imputed_y)] <- mean(imputed_y, na.rm = TRUE)
-  } else if (na.action == "mice_impute") {
-    full_data = as.matrix(cbind(data,y))
-    tempData <- mice(full_data,m=1,maxit=50,meth='pmm',seed=500,printFlag = FALSE)
-    imputed_data <- complete(tempData,1)[,-ncol(full_data)]
-    imputed_y = complete(tempData,1)[,ncol(full_data)]
   }
   return(list(imputed_data,imputed_y))
 }

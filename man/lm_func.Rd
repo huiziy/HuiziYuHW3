@@ -4,7 +4,7 @@
 \alias{lm_func}
 \title{linear regression function}
 \usage{
-lm_func(X, y, weights, na.action = "ignore")
+lm_func(X, y, weights, na.action = c("ignore", "mean_impute", "mice_impute"))
 }
 \arguments{
 \item{X}{A data frame (one or multiple columns) of predictors (both continuous and categorical)}
