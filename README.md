@@ -10,7 +10,18 @@
 coverage](https://codecov.io/gh/huiziy/HuiziYuHW3/branch/master/graph/badge.svg)](https://app.codecov.io/gh/huiziy/HuiziYuHW3?branch=master)
 <!-- badges: end -->
 
-The goal of HuiziYuHW3 is to …
+This package creates a linear regression model embedded with missing
+data treatment. The linear regression model takes in a data frame of
+continuous and categorical variables, and output a list object
+containing relevant model information including the coefficient, t
+statistics, R Squared etc.
+
+Compared to the default `lm` model, although the package is not so
+efficient and memory-saving when running the same huge data tasks, it
+allows for easy assess of the objects without calling addtional
+functions such as `summary()` and `cov`. Tutorial and description are
+provided to help users better access and understand the functionalities
+of the models and functions.
 
 ## Installation
 
@@ -22,38 +33,65 @@ You can install the development version of HuiziYuHW3 from
 devtools::install_github("huiziy/HuiziYuHW3")
 ```
 
+## Structure
+
+- `lm_func`: main function used to produce linear regression model
+  prediction
+  - input:
+    1.  X - data frame of predictors (continuous and categorical;
+        missing values allowed)
+    2.  y - vector of outcome
+    3.  na.action - “ignore” or “mean_impute”
+  - output: a list object containing relevant model information
+- `treat_na`: missing data treatment function. Embedded in the `lm_func`
+  - input:
+    1.  na.action - “ignore” or “mean_impute”
+    2.  data - data frame of predictors (continuous and categorical
+    3.  contains missing values); y - vector of outcome
+  - output: completed data that can be used in linear model estimation
+    \## Details of the Function
+
+### Missing value treatment:
+
+- `ignore`: same as the default `lm` function and `na.omit`: any rows
+  containing missing values are dropped. The linear regression
+  coefficient estimates are calculated using only rows with all complete
+  observations.
+- `mean_impute`: performs mean imputation on the numeric variables, and
+  mode imputation on categorical variables. If multiple modes are found
+  for the categorical variable, the algorithm will randomly choose one.
+
+### Model output
+
+The function `lm_func` will produce a list containing the following
+objects
+
+- `fitted_values`: the fitted values obtain after coefficient estimation
+- `residuals`: the residuals, which is calculated by taking the
+  difference between observed outcome and fitted values
+- `betas`: the coefficient estimates obtained from the linear model
+- `beta_summary`: contains the coefficient estimate, standard errors of
+  the coefficients, t_value and p_value
+- `MSE`: Mean Squared Error
+- `R_squared`: R squared
+- `R_squared_adjusted`: R squared Adjusted
+- `details`: additional information about the model that will be used in
+  plotting. Including + `beta_se`: the standard errors of the
+  coefficient
+  - `t_stat`: the t statistics of the betas
+  - `p_stat`: the p stat of the coefficients (used for evaluating the
+    significance of the coefficient)
+  - `hat_mat`: the hat matrix (used for extracting leverage)
+
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
-library(HuiziYuHW3)
-## basic example code
+library(MASS, quietly = TRUE)
+data(Boston)
+X = Boston[-ncol(Boston)]
+y = Boston$medv
+## Running the model
+lm_object = lm_func(X,y)
+## Extracting desired data model properties
+lm_object$betas
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
