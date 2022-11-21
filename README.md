@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/huiziy/HuiziYuHW3/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/huiziy/HuiziYuHW3/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/huiziy/HuiziYuHW3/branch/master/graph/badge.svg)](https://app.codecov.io/gh/huiziy/HuiziYuHW3?branch=master)
 [![Coveralls test
 coverage](https://coveralls.io/repos/github/huiziy/HuiziYuHW3/badge.svg)](https://coveralls.io/r/huiziy/HuiziYuHW3?branch=master)
 <!-- badges: end -->
