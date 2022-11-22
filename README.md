@@ -35,7 +35,7 @@ devtools::install_github("huiziy/HuiziYuHW3",dependencies = TRUE, build_vignette
 
 ## Structure
 
-- `README.Rmd`
+- `README.Rmd`: overview of the project package and the R functions
 
 - `lm_func.R`: main function used to produce linear regression model
   prediction

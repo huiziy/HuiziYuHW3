@@ -33,7 +33,7 @@ You can install the development version of HuiziYuHW3 from [GitHub](https://gith
 devtools::install_github("huiziy/HuiziYuHW3",dependencies = TRUE, build_vignettes = TRUE)
 ```
 ## Structure
-* `README.Rmd`
+* `README.Rmd`: overview of the project package and the R functions
 * `lm_func.R`: main function used to produce linear regression model prediction
   + input: 
     1. X - data frame of predictors (continuous and categorical; missing values allowed)
